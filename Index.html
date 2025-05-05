@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./Css/style.css" />
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>DevTrack</title>
+</head>
+
+<body>
+    <main>
+        <section class="search-area">
+            <div class="titulo">
+                <h1 class="typewriter">DevTrack</h1>
+            </div>
+
+            <div class="search-filter-row">
+                <div class="search-container">
+                    <input id="searchbarinput" class="spectacledcoder-search-bar-input" type="text"
+                        placeholder="Type something" />
+                    <img id="searchicon" width="22" height="22"
+                        src="https://img.icons8.com/sf-black/100/ffffff/search.png" alt="search" />
+                </div>
+
+                <div class="filtros">
+                    <select class="searchbarfilter" id="filter" onchange="filterTasks()">
+                        <option value="all">All</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+
+                <button id="createBtn" class="add-task-button">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+            </div>
+
+            <ul id="taskList" class="task-list"></ul>
+        </section>
+    </main>
+
+    <script type="module" src="./Js/Create_taks.js"></script>
+
+</body>
+
+</html>
