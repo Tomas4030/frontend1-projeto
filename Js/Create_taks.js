@@ -1,131 +1,248 @@
-import { createTodo } from "../Api/Api.js";
+import { createTodo, getTodos } from '../Api/Api.js';
 
-document.addEventListener("DOMContentLoaded", () => {
-  const createBtn = document.getElementById("createBtn");
-  const taskList = document.getElementById("taskList");
+// DOM Elements
+const createButton = document.getElementById('createBtn');
+const taskList = document.getElementById('taskList');
+const taskCreateModal = document.getElementById('taskCreateModal');
+const closeCreateModal = document.getElementById('closeCreateModal');
+const taskViewModal = document.getElementById('taskViewModal');
+const closeTaskViewModal = document.getElementById('closeTaskViewModal');
+const taskForm = document.getElementById('taskForm');
+const taskTitle = document.getElementById('taskTitle');
+const taskDescription = document.getElementById('taskDescription');
+const submitTaskBtn = document.getElementById('submitTaskBtn');
+const filterSelect = document.getElementById('filter');
 
-  function abrirModalTask() {
-    const modal = document.createElement('div');
-    modal.classList.add('task-modal');
+// Priority mapping
+const mapPriority = (apiPriority) => {
+    switch(apiPriority) {
+        case 'high': return 'high_priority';
+        case 'medium': return 'medium_priority';
+        case 'low': return 'low_priority';
+        case 'urgent': return 'urgent';
+        default: return 'low_priority';
+    }
+};
 
-    const modalContent = document.createElement('div');
-    modalContent.classList.add('task-modal-content');
+// Modal functions
+const openCreateModal = () => {
+    taskCreateModal.style.display = 'block';
+};
 
-    const titulo = document.createElement('h2');
-    titulo.textContent = "Create New Task";
-    modalContent.appendChild(titulo);
+const closeCreateModalHandler = () => {
+    taskCreateModal.style.display = 'none';
+    taskForm.reset();
+};
 
-    const taskForm = document.createElement("form");
-    taskForm.id = "taskForm";
+const openTaskViewModal = (task) => {
+    const modalContent = document.querySelector('#taskViewModal .modal-content');
+    
+    // Clear all priority classes
+    modalContent.classList.remove(
+        'priority-urgent',
+        'priority-high_priority',
+        'priority-medium_priority',
+        'priority-low_priority'
+    );
+    
+    // Add correct priority class
+    const priorityClass = mapPriority(task.priority);
+    modalContent.classList.add(`priority-${priorityClass}`);
+    
+    // Set modal content
+    document.getElementById('modalTaskTitle').textContent = task.title || 'No Title';
+    document.getElementById('modalTaskDescription').textContent = task.description || 'No Description';
+    
+    // Update metadata
+    const metaContainer = document.createElement('div');
+    metaContainer.className = 'modal-meta';
+    metaContainer.innerHTML = `
+        <div class="modal-meta-item">
+            <span class="meta-label">Priority:</span>
+            <span class="meta-value priority-${priorityClass}">${getPriorityLabel(task.priority)}</span>
+        </div>
+        <div class="modal-meta-item">
+            <span class="meta-label">Category:</span>
+            <span class="meta-value">${task.category || 'No Category'}</span>
+        </div>
+        <div class="modal-meta-item">
+            <span class="meta-label">Due Date:</span>
+            <span class="meta-value">${formatDueDate(task.date, task.time)}</span>
+        </div>
+    `;
+    
+    // Replace old metadata
+    const oldMeta = document.querySelector('#taskViewModal .modal-meta');
+    if (oldMeta) oldMeta.remove();
+    modalContent.insertBefore(metaContainer, document.getElementById('modalTaskDescription'));
+    
+    taskViewModal.style.display = 'block';
+};
 
-    const titleLabel = document.createElement("label");
-    titleLabel.setAttribute("for", "title");
-    titleLabel.textContent = "Title:";
-    const titleInput = document.createElement("input");
-    titleInput.type = "text";
-    titleInput.id = "title";
-    titleInput.name = "title";
-    titleInput.required = true;
+const closeTaskViewModalHandler = () => {
+    taskViewModal.style.display = 'none';
+};
 
-    const descriptionLabel = document.createElement("label");
-    descriptionLabel.setAttribute("for", "description");
-    descriptionLabel.textContent = "Description:";
-    const descriptionInput = document.createElement("textarea");
-    descriptionInput.id = "description";
-    descriptionInput.name = "description";
-    descriptionInput.required = true;
+// Helper functions
+const formatDueDate = (date, time) => {
+    if (!date) return 'No due date';
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dueDate = new Date(`${date}T${time || '00:00:00'}`);
+    return dueDate.toLocaleDateString('en-US', options) + (time ? ` at ${time}` : '');
+};
 
-    const dueDateLabel = document.createElement("label");
-    dueDateLabel.setAttribute("for", "dueDate");
-    dueDateLabel.textContent = "Due Date:";
-    const dueDateInput = document.createElement("input");
-    dueDateInput.type = "date";
-    dueDateInput.id = "dueDate";
-    dueDateInput.name = "dueDate";
-    dueDateInput.required = true;
+const getPriorityLabel = (priority) => {
+    const normalizedPriority = mapPriority(priority);
+    switch (normalizedPriority) {
+        case 'urgent': return 'Urgent ⚠️';
+        case 'high_priority': return 'High Priority 🔥';
+        case 'medium_priority': return 'Medium Priority ⚖️';
+        case 'low_priority': return 'Low Priority 🕒';
+        default: return 'No Priority';
+    }
+};
 
-    const priorityLabel = document.createElement("label");
-    priorityLabel.setAttribute("for", "priority");
-    priorityLabel.textContent = "Priority:";
-    const priorityInput = document.createElement("select");
-    priorityInput.id = "priority";
-    priorityInput.name = "priority";
-    priorityInput.required = true;
+const truncateDescription = (description) => {
+    const maxLength = 100;
+    if (!description) return 'No description';
+    if (description.length > maxLength) {
+        return description.slice(0, maxLength) + '...';
+    }
+    return description;
+};
 
-    const optionLow = document.createElement("option");
-    optionLow.value = "low";
-    optionLow.textContent = "Low";
+// Display tasks
+const displayTasks = async () => {
+    try {
+        const response = await getTodos();
+        const tasks = Array.isArray(response) ? response : [];
+        
+        taskList.innerHTML = '';
 
-    const optionMedium = document.createElement("option");
-    optionMedium.value = "medium";
-    optionMedium.textContent = "Medium";
+        if (tasks.length === 0) {
+            taskList.innerHTML = '<li class="no-tasks">No tasks found. Create your first task!</li>';
+            return;
+        }
 
-    const optionHigh = document.createElement("option");
-    optionHigh.value = "high";
-    optionHigh.textContent = "High";
+        tasks.forEach((task, index) => {
+            const taskElement = document.createElement('li');
+            const priorityClass = mapPriority(task.priority);
+            
+            // Add priority class to task element
+            taskElement.className = `task-item priority-${priorityClass}`;
+            taskElement.style.setProperty('--order', index);
+            
+            const priorityLabel = getPriorityLabel(task.priority);
+            const dueDate = formatDueDate(task.date, task.time);
 
-    priorityInput.appendChild(optionLow);
-    priorityInput.appendChild(optionMedium);
-    priorityInput.appendChild(optionHigh);
+            taskElement.innerHTML = `
+                <div class="task-header">
+                    <h3 class="task-title">${task.title || 'No Title'}</h3>
+                    <span class="task-priority priority-${priorityClass}">${priorityLabel}</span>
+                </div>
+                <div class="task-content">
+                    <p class="task-description">${truncateDescription(task.description)}</p>
+                </div>
+                <div class="task-footer">
+                    <span class="task-category">${task.category || 'No Category'}</span>
+                    <span class="task-date">${dueDate}</span>
+                </div>
+            `;
 
-    const submitBtn = document.createElement("button");
-    submitBtn.type = "submit";
-    submitBtn.textContent = "Create Task";
+            taskElement.addEventListener('click', () => openTaskViewModal(task));
+            taskList.appendChild(taskElement);
+        });
+    } catch (error) {
+        console.error("Error fetching tasks:", error);
+        taskList.innerHTML = '<li class="error">Error loading tasks. Please try again.</li>';
+    }
+};
 
-    taskForm.appendChild(titleLabel);
-    taskForm.appendChild(titleInput);
-    taskForm.appendChild(descriptionLabel);
-    taskForm.appendChild(descriptionInput);
-    taskForm.appendChild(dueDateLabel);
-    taskForm.appendChild(dueDateInput);
-    taskForm.appendChild(priorityLabel);
-    taskForm.appendChild(priorityInput);
-    taskForm.appendChild(submitBtn);
+// Create new task
+const createTask = async (event) => {
+    event.preventDefault();
 
-    const closeModal = document.createElement("button");
-    closeModal.textContent = "Close";
-    closeModal.classList.add("task-modal-close");
-    closeModal.addEventListener("click", () => fecharModalTask(modal));
-
-    modalContent.appendChild(closeModal);
-    modalContent.appendChild(taskForm);
-    modal.appendChild(modalContent);
-
-    document.body.appendChild(modal);
-
-    taskForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const newTask = {
-        title: titleInput.value,
-        description: descriptionInput.value,
-        dueDate: dueDateInput.value,
-        priority: priorityInput.value,
+    const newTask = {
+        title: taskTitle.value,
+        description: taskDescription.value,
         completed: false,
         createdAt: new Date().toISOString(),
-      };
+        priority: document.getElementById('taskCategoryPriority').value,
+        category: document.getElementById('taskCategoryCategory').value,
+        date: document.getElementById('taskdate').value,
+        time: document.getElementById('tasktime').value,
+    };
 
-      try {
-        const taskResponse = await createTodo(newTask);
-        addTaskToDOM(taskResponse);
-        taskForm.reset();
-        modal.remove();
-      } catch (error) {
-        console.error("Erro ao criar tarefa:", error);
-        alert("Falha ao criar a tarefa. Tente novamente.");
-      }
-    });
-  }
+    try {
+        await createTodo(newTask);
+        closeCreateModalHandler();
+        await displayTasks();
+    } catch (error) {
+        console.error("Error creating task:", error);
+        alert("Failed to create task. Please try again.");
+    }
+};
 
-  const addTaskToDOM = (task) => {
-    const li = document.createElement("li");
-    li.textContent = `${task.title} - ${task.priority} - Due: ${task.dueDate}`;
-    taskList.appendChild(li);
-  };
+// Filter tasks
+const filterTasks = async () => {
+    const filterValue = filterSelect.value;
+    
+    try {
+        const response = await getTodos();
+        const tasks = Array.isArray(response) ? response : [];
+        
+        taskList.innerHTML = '';
 
-  const fecharModalTask = (modal) => {
-    modal.remove();
-  };
+        const filteredTasks = filterValue === 'all' 
+            ? tasks 
+            : tasks.filter(task => task.category === filterValue);
 
-  createBtn.addEventListener("click", abrirModalTask);
+        if (filteredTasks.length === 0) {
+            taskList.innerHTML = '<li class="no-tasks">No tasks match this filter.</li>';
+            return;
+        }
+
+        filteredTasks.forEach((task, index) => {
+            const taskElement = document.createElement('li');
+            const priorityClass = mapPriority(task.priority);
+            
+            taskElement.className = `task-item priority-${priorityClass}`;
+            taskElement.style.setProperty('--order', index);
+            
+            const priorityLabel = getPriorityLabel(task.priority);
+            const dueDate = formatDueDate(task.date, task.time);
+
+            taskElement.innerHTML = `
+                <div class="task-header">
+                    <h3 class="task-title">${task.title || 'No Title'}</h3>
+                    <span class="task-priority priority-${priorityClass}">${priorityLabel}</span>
+                </div>
+                <div class="task-content">
+                    <p class="task-description">${truncateDescription(task.description)}</p>
+                </div>
+                <div class="task-footer">
+                    <span class="task-category">${task.category || 'No Category'}</span>
+                    <span class="task-date">${dueDate}</span>
+                </div>
+            `;
+
+            taskElement.addEventListener('click', () => openTaskViewModal(task));
+            taskList.appendChild(taskElement);
+        });
+    } catch (error) {
+        console.error("Error filtering tasks:", error);
+        taskList.innerHTML = '<li class="error">Error filtering tasks. Please try again.</li>';
+    }
+};
+
+// Event listeners
+createButton.addEventListener('click', openCreateModal);
+closeCreateModal.addEventListener('click', closeCreateModalHandler);
+closeTaskViewModal.addEventListener('click', closeTaskViewModalHandler);
+taskForm.addEventListener('submit', createTask);
+filterSelect.addEventListener('change', filterTasks);
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    displayTasks();
 });

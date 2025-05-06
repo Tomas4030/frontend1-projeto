@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./Css/style.css" />
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>DevTrack</title>
+</head>
+
+<body>
+    <main>
+        <section class="search-area">
+            <div class="titulo">
+                <h1 class="typewriter">DevTrack</h1>
+            </div>
+
+            <div class="search-filter-row">
+                <div class="search-container">
+                    <input id="searchbarinput" class="spectacledcoder-search-bar-input" type="text"
+                        placeholder="Type something" />
+                    <img id="searchicon" width="22" height="22"
+                        src="https://img.icons8.com/sf-black/100/ffffff/search.png" alt="search" />
+                </div>
+
+                <div class="filtros">
+                    <select class="searchbarfilter" id="filter" onchange="filterTasks()">
+                        <option value="all">All</option>
+                        <option value="home">Home 🏠</option>
+                        <option value="shopping">Shopping 🛒</option>
+                        <option value="fitness">Fitness 🏋️‍♂️</option>
+                        <option value="study">Study 📚</option>
+                        <option value="social">Social 👫</option>
+                        <option value="finance">Finance 💰</option>
+                        <option value="travel">Travel ✈️</option>
+                        <option value="urgent">Urgent ⚠️</option>
+                        <option value="longterm">Long-Term 📅</option>
+                    </select>
+                </div>
+
+                <button id="createBtn" class="add-task-button">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+            </div>
+
+            <ul id="taskList" class="task-list"></ul>
+
+            <div class="task-list-container">
+                <ul id="taskList" class="task-list">
+                </ul>
+            </div>
+
+            <div id="taskViewModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeTaskViewModal" class="close">&times;</span>
+                    <h2 id="modalTaskTitle">Task Title</h2>
+
+                    <div class="modal-meta">
+                        <div class="modal-meta-item">
+                            <span class="meta-label">Priority:</span>
+                            <span class="meta-value priority-high">High</span>
+                        </div>
+                        <div class="modal-meta-item">
+                            <span class="meta-label">Category:</span>
+                            <span class="meta-value">Work</span>
+                        </div>
+                        <div class="modal-meta-item">
+                            <span class="meta-label">Due Date:</span>
+                            <span class="meta-value">Tomorrow</span>
+                        </div>
+                    </div>
+
+                    <p id="modalTaskDescription">Full task description...</p>
+                </div>
+            </div>
+            <div id="taskCreateModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeCreateModal" class="close">&times;</span>
+                    <h2 class="modal-title">Create Task</h2>
+                    <form id="taskForm">
+                        <input type="text" id="taskTitle" placeholder="Task Title" required />
+                        <textarea id="taskDescription" placeholder="Task Description" required></textarea>
+                        <input type="date" name="taskdate" id="taskdate" required />
+                        <input type="time" name="tasktime" id="tasktime" required />
+
+                        <select class="taskCategory" id="taskCategoryCategory" required>
+                            <option value="all">All</option>
+                            <option value="home">Home 🏠</option>
+                            <option value="shopping">Shopping 🛒</option>
+                            <option value="fitness">Fitness 🏋️‍♂️</option>
+                            <option value="study">Study 📚</option>
+                            <option value="social">Social 👫</option>
+                            <option value="finance">Finance 💰</option>
+                            <option value="travel">Travel ✈️</option>
+                            <option value="urgent">Urgent ⚠️</option>
+                            <option value="longterm">Long-Term 📅</option>
+                        </select>
+
+                        <select class="taskCategory" id="taskCategoryPriority" required>
+                            <option value="urgent">Urgent ⚠️</option>
+                            <option value="high_priority">High Priority 🔥</option>
+                            <option value="medium_priority">Medium Priority ⚖️</option>
+                            <option value="low_priority">Low Priority 🕒</option>
+                        </select>
+
+                        <button type="submit" id="submitTaskBtn">Create Task</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="./Js/Create_taks.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+#taskForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-title{
+    margin-bottom: 20px;
+}
+
+#taskForm input,
+#taskForm textarea,
+#taskForm select,
+#taskForm button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background-color: #27292a;
+    color: #e2e2e2;
+    font-size: 1rem;
+    font-weight: 500;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+
+#taskForm textarea {
+    height: 120px;
+    resize: none;
+}
+
+button[type="submit"] {
+    background-color: #ff5252;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #e64a4a;
+}
+

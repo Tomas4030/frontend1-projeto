@@ -1,23 +1,18 @@
+@import url(./Animacoes.css);
+@import url(./Modal.css);
+@import url(./Responsivo.css);
+@import url(./Taks.css);
+
 body {
-    margin: 0px;
-    padding: 0px;
-    background-color: #1f1e1e;
+    margin: 0;
+    padding: 0;
+    background-color: #1f1e1e; 
+    font-family: Arial, sans-serif;
+    color: #e2e2e2;
 }
 
-@keyframes typing {
-    from {
-        width: 0
-    }
-
-    to {
-        width: 9ch
-    }
-}
-
-@keyframes blink {
-    50% {
-        border-color: transparent
-    }
+h1, h2 {
+    color: #fff;
 }
 
 .typewriter {
@@ -28,13 +23,11 @@ body {
     white-space: nowrap;
     overflow: hidden;
     border-right: 4px solid #ffffff;
-    /* cursor */
     width: 0;
     animation:
         typing 2.5s steps(9, end) forwards,
         blink 0.7s step-end infinite;
 }
-
 
 .search-area {
     display: flex;
@@ -93,7 +86,6 @@ body {
     transition: border 0.3s, box-shadow 0.3s;
     appearance: none;
     cursor: pointer;
-
     background-image: url("https://img.icons8.com/ios-filled/24/ffffff/expand-arrow--v1.png");
     background-repeat: no-repeat;
     background-position: right 15px center;
@@ -114,4 +106,3 @@ body {
     appearance: none;
     cursor: pointer;
 }
-
