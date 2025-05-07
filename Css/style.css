@@ -1,28 +1,43 @@
 @import url(./Animacoes.css);
-@import url(./Modal.css);
 @import url(./Responsivo.css);
 @import url(./Taks.css);
+
+:root {
+    --urgent: #ff5252;
+    --high-priority: #ff8a65;
+    --medium-priority: #ffd54f;
+    --low-priority: #81c784;
+    --bg-dark: #1e1f21;
+    --card-bg: #27292a;
+    --card-bg-light: #2e2f32;
+    --text-primary: #ffffff;
+    --text-secondary: #e2e2e2;
+    --text-muted: #b0b0b0;
+    --border-color: #3a3c3f;
+    --shadow-color: rgba(0, 0, 0, 0.25);
+}
+
 
 body {
     margin: 0;
     padding: 0;
-    background-color: #1f1e1e; 
+    background-color: var(--bg-dark); 
     font-family: Arial, sans-serif;
-    color: #e2e2e2;
+    color: var(--text-secondary);
 }
 
 h1, h2 {
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .typewriter {
     font-size: 120px;
     margin-top: 30px;
     font-family: monospace;
-    color: #ffffff;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
-    border-right: 4px solid #ffffff;
+    border-right: 4px solid var(--text-primary);
     width: 0;
     animation:
         typing 2.5s steps(9, end) forwards,
@@ -57,8 +72,8 @@ h1, h2 {
     border: none;
     padding: 0 15px 0 45px;
     font-size: 14px;
-    background-color: #27292a;
-    color: #ffffff;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -80,8 +95,8 @@ h1, h2 {
     height: 50px;
     border-radius: 23px;
     padding: 0 20px;
-    background-color: #27292a;
-    color: #ffffff;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
     font-weight: 500;
     border: 2px solid transparent;
     outline: none;
@@ -99,8 +114,8 @@ h1, h2 {
     height: 50px;
     border-radius: 23px;
     padding: 0 20px;
-    background-color: #27292a;
-    color: #ffffff;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
     font-weight: 500;
     border: 2px solid transparent;
     outline: none;

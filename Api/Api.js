@@ -1,29 +1,15 @@
 const apiURL = "https://681900d25a4b07b9d1d1a5a2.mockapi.io/ToDo/";
 
-const mapApiPriority = (apiPriority) => {
-    switch(apiPriority) {
-        case 'high': return 'high_priority';
-        case 'medium': return 'medium_priority';
-        case 'low': return 'low_priority';
-        case 'urgent': return 'urgent';
-        default: return 'low_priority';
-    }
-};
-
 export const getTodos = async () => {
     const response = await fetch(apiURL + "todos");
-    const data = await response.json();
-    
-    return data.map(todo => ({
-        ...todo,
-        priority: mapApiPriority(todo.priority),
-    }));
+    if (!response.ok) throw new Error("Failed to fetch tasks");
+    return await response.json();
 };
 
 export const getTodo = async (id) => {
     const response = await fetch(apiURL + "todos/" + id);
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error("Failed to fetch task");
+    return await response.json();
 };
 
 export const createTodo = async (todo) => {
@@ -34,8 +20,8 @@ export const createTodo = async (todo) => {
         },
         body: JSON.stringify(todo),
     });
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error("Failed to create task");
+    return await response.json();
 };
 
 export const updateTodo = async (id, todo) => {
@@ -46,8 +32,8 @@ export const updateTodo = async (id, todo) => {
         },
         body: JSON.stringify(todo),
     });
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error("Failed to update task");
+    return await response.json();
 };
 
 export const deleteTodo = async (id) => {
@@ -57,6 +43,6 @@ export const deleteTodo = async (id) => {
             "Content-Type": "application/json",
         },
     });
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error("Failed to delete task");
+    return await response.json();
 };
