@@ -158,7 +158,6 @@
     color: var(--text-muted);
     line-height: 1.6;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -260,8 +259,32 @@
     color: var(--text-secondary);
     font-size: 16px;
     line-height: 1.8;
-    white-space: pre-line;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     margin-bottom: 25px;
+    max-height: 50vh; /* Adjusted to prevent it from being too tall */
+    overflow-y: auto;
+    padding-right: 10px; /* Added padding for better readability */
+}
+
+/* Custom Scrollbar for Description */
+#modalTaskDescription::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+#modalTaskDescription::-webkit-scrollbar-track {
+    background: var(--card-bg-light); /* Track color */
+    border-radius: 4px;
+}
+
+#modalTaskDescription::-webkit-scrollbar-thumb {
+    background: var(--text-muted); /* Thumb color */
+    border-radius: 4px;
+}
+
+#modalTaskDescription::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary); /* Thumb hover color */
 }
 
 .modal-meta {
@@ -291,3 +314,28 @@
     animation: cardEntrance 0.5s ease-out forwards;
     animation-delay: calc(var(--order) * 0.1s);
 }
+
+.task-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.task-actions button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+.task-actions button:hover {
+    color: var(--urgent);
+}
+
+.task-actions .task-edit:hover {
+    color: var(--low-priority) /* Verde */
+}
+
+

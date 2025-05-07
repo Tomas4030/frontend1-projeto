@@ -1,4 +1,4 @@
-import { createTodo, getTodos } from '../Api/Api.js';
+import { createTodo, getTodos, deleteTodo } from '../Api/Api.js';
 
 // DOM Elements
 const createButton = document.getElementById('createBtn');
@@ -12,17 +12,12 @@ const taskTitle = document.getElementById('taskTitle');
 const taskDescription = document.getElementById('taskDescription');
 const submitTaskBtn = document.getElementById('submitTaskBtn');
 const filterSelect = document.getElementById('filter');
+const priorityClass = task.priority;
 
-// Priority mapping
-const mapPriority = (apiPriority) => {
-    switch(apiPriority) {
-        case 'high': return 'high_priority';
-        case 'medium': return 'medium_priority';
-        case 'low': return 'low_priority';
-        case 'urgent': return 'urgent';
-        default: return 'low_priority';
-    }
-};
+
+
+
+
 
 // Modal functions
 const openCreateModal = () => {
@@ -36,24 +31,20 @@ const closeCreateModalHandler = () => {
 
 const openTaskViewModal = (task) => {
     const modalContent = document.querySelector('#taskViewModal .modal-content');
-    
-    // Clear all priority classes
+
     modalContent.classList.remove(
         'priority-urgent',
         'priority-high_priority',
         'priority-medium_priority',
         'priority-low_priority'
     );
-    
-    // Add correct priority class
+
     const priorityClass = mapPriority(task.priority);
     modalContent.classList.add(`priority-${priorityClass}`);
-    
-    // Set modal content
+
     document.getElementById('modalTaskTitle').textContent = task.title || 'No Title';
     document.getElementById('modalTaskDescription').textContent = task.description || 'No Description';
-    
-    // Update metadata
+
     const metaContainer = document.createElement('div');
     metaContainer.className = 'modal-meta';
     metaContainer.innerHTML = `
@@ -70,12 +61,11 @@ const openTaskViewModal = (task) => {
             <span class="meta-value">${formatDueDate(task.date, task.time)}</span>
         </div>
     `;
-    
-    // Replace old metadata
+
     const oldMeta = document.querySelector('#taskViewModal .modal-meta');
     if (oldMeta) oldMeta.remove();
     modalContent.insertBefore(metaContainer, document.getElementById('modalTaskDescription'));
-    
+
     taskViewModal.style.display = 'block';
 };
 
@@ -105,10 +95,7 @@ const getPriorityLabel = (priority) => {
 const truncateDescription = (description) => {
     const maxLength = 100;
     if (!description) return 'No description';
-    if (description.length > maxLength) {
-        return description.slice(0, maxLength) + '...';
-    }
-    return description;
+    return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
 };
 
 // Display tasks
@@ -116,7 +103,14 @@ const displayTasks = async () => {
     try {
         const response = await getTodos();
         const tasks = Array.isArray(response) ? response : [];
-        
+
+        // Sort by nearest due date
+        tasks.sort((a, b) => {
+            const aDate = new Date(`${a.date || '9999-12-31'}T${a.time || '23:59'}`);
+            const bDate = new Date(`${b.date || '9999-12-31'}T${b.time || '23:59'}`);
+            return aDate - bDate;
+        });
+
         taskList.innerHTML = '';
 
         if (tasks.length === 0) {
@@ -127,11 +121,10 @@ const displayTasks = async () => {
         tasks.forEach((task, index) => {
             const taskElement = document.createElement('li');
             const priorityClass = mapPriority(task.priority);
-            
-            // Add priority class to task element
+
             taskElement.className = `task-item priority-${priorityClass}`;
             taskElement.style.setProperty('--order', index);
-            
+
             const priorityLabel = getPriorityLabel(task.priority);
             const dueDate = formatDueDate(task.date, task.time);
 
@@ -146,8 +139,25 @@ const displayTasks = async () => {
                 <div class="task-footer">
                     <span class="task-category">${task.category || 'No Category'}</span>
                     <span class="task-date">${dueDate}</span>
+                    <div class="task-actions">
+                        <button class="edit-task-btn" title="Edit"><i class="fas fa-pen"></i></button>
+                        <button class="delete-task-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             `;
+
+            taskElement.querySelector('.edit-task-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('Funcionalidade de editar ainda não está implementada.');
+            });
+
+            taskElement.querySelector('.delete-task-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (confirm("Tens a certeza que queres apagar esta tarefa?")) {
+                    await deleteTodo(task.id);
+                    await displayTasks();
+                }
+            });
 
             taskElement.addEventListener('click', () => openTaskViewModal(task));
             taskList.appendChild(taskElement);
@@ -162,15 +172,33 @@ const displayTasks = async () => {
 const createTask = async (event) => {
     event.preventDefault();
 
+    const date = document.getElementById('taskdate').value;
+    const time = document.getElementById('tasktime').value;
+
+    let taskDateTime = new Date();
+    if (date && time) {
+        taskDateTime = new Date(`${date}T${time}`);
+        if (taskDateTime < new Date()) {
+            alert("Não podes escolher uma data/hora no passado.");
+            return;
+        }
+    } else {
+        // Se não há data/hora definida, atribuir atual +10 minutos
+        taskDateTime = new Date(Date.now() + 10 * 60 * 1000);
+    }
+
+    const isoDate = taskDateTime.toISOString().split('T')[0];
+    const isoTime = taskDateTime.toTimeString().slice(0, 5);
+
     const newTask = {
         title: taskTitle.value,
         description: taskDescription.value,
         completed: false,
         createdAt: new Date().toISOString(),
-        priority: document.getElementById('taskCategoryPriority').value,
+        priority: mapPriority(document.getElementById('taskCategoryPriority').value),
         category: document.getElementById('taskCategoryCategory').value,
-        date: document.getElementById('taskdate').value,
-        time: document.getElementById('tasktime').value,
+        date: isoDate,
+        time: isoTime,
     };
 
     try {
@@ -186,15 +214,22 @@ const createTask = async (event) => {
 // Filter tasks
 const filterTasks = async () => {
     const filterValue = filterSelect.value;
-    
+
     try {
         const response = await getTodos();
-        const tasks = Array.isArray(response) ? response : [];
-        
+        let tasks = Array.isArray(response) ? response : [];
+
+        // Ordenar por data
+        tasks.sort((a, b) => {
+            const aDate = new Date(`${a.date || '9999-12-31'}T${a.time || '23:59'}`);
+            const bDate = new Date(`${b.date || '9999-12-31'}T${b.time || '23:59'}`);
+            return aDate - bDate;
+        });
+
         taskList.innerHTML = '';
 
-        const filteredTasks = filterValue === 'all' 
-            ? tasks 
+        const filteredTasks = filterValue === 'all'
+            ? tasks
             : tasks.filter(task => task.category === filterValue);
 
         if (filteredTasks.length === 0) {
@@ -205,10 +240,10 @@ const filterTasks = async () => {
         filteredTasks.forEach((task, index) => {
             const taskElement = document.createElement('li');
             const priorityClass = mapPriority(task.priority);
-            
+
             taskElement.className = `task-item priority-${priorityClass}`;
             taskElement.style.setProperty('--order', index);
-            
+
             const priorityLabel = getPriorityLabel(task.priority);
             const dueDate = formatDueDate(task.date, task.time);
 
@@ -223,8 +258,25 @@ const filterTasks = async () => {
                 <div class="task-footer">
                     <span class="task-category">${task.category || 'No Category'}</span>
                     <span class="task-date">${dueDate}</span>
+                    <div class="task-actions">
+                        <button class="edit-task-btn" title="Edit"><i class="fas fa-pen"></i></button>
+                        <button class="delete-task-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             `;
+
+            taskElement.querySelector('.edit-task-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('Funcionalidade de editar ainda não está implementada.');
+            });
+
+            taskElement.querySelector('.delete-task-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (confirm("Tens a certeza que queres apagar esta tarefa?")) {
+                    await deleteTodo(task.id);
+                    await displayTasks();
+                }
+            });
 
             taskElement.addEventListener('click', () => openTaskViewModal(task));
             taskList.appendChild(taskElement);
@@ -244,5 +296,27 @@ filterSelect.addEventListener('change', filterTasks);
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    displayTasks();
+    const dateInput = document.getElementById('taskdate');
+    const timeInput = document.getElementById('tasktime');
+
+    const updateTimeMin = () => {
+        const selectedDate = new Date(dateInput.value);
+        const now = new Date();
+
+        if (selectedDate.toDateString() === now.toDateString()) {
+            // Se a data for hoje, limita o mínimo da hora
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            timeInput.min = `${hours}:${minutes}`;
+        } else {
+            // Se for outro dia, remove limite de hora
+            timeInput.removeAttribute('min');
+        }
+    };
+
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+
+    dateInput.addEventListener('change', updateTimeMin);
+    updateTimeMin(); // aplica ao carregar
 });

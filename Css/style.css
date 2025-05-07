@@ -37,6 +37,8 @@ h1, h2 {
 }
 
 .search-filter-row {
+    margin-top: 30px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 20px;
