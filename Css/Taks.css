@@ -44,10 +44,21 @@
     transition: all 0.3s ease;
 }
 
-.task-item.priority-urgent_priority::before { background-color: var(--urgent); }
-.task-item.priority-high_priority::before { background-color: var(--high-priority); }
-.task-item.priority-medium_priority::before { background-color: var(--medium-priority); }
-.task-item.priority-low_priority::before { background-color: var(--low-priority); }
+.task-item.priority-urgent_priority::before {
+    background-color: var(--urgent);
+}
+
+.task-item.priority-high_priority::before {
+    background-color: var(--high-priority);
+}
+
+.task-item.priority-medium_priority::before {
+    background-color: var(--medium-priority);
+}
+
+.task-item.priority-low_priority::before {
+    background-color: var(--low-priority);
+}
 
 .task-priority {
     padding: 6px 14px;
@@ -60,10 +71,25 @@
     white-space: nowrap;
 }
 
-.task-priority.priority-urgent_priority { background-color: var(--urgent); color: white; }
-.task-priority.priority-high_priority { background-color: var(--high-priority); color: white; }
-.task-priority.priority-medium_priority { background-color: var(--medium-priority); color: #333; }
-.task-priority.priority-low_priority { background-color: var(--low-priority); color: white; }
+.task-priority.priority-urgent_priority {
+    background-color: var(--urgent);
+    color: white;
+}
+
+.task-priority.priority-high_priority {
+    background-color: var(--high-priority);
+    color: white;
+}
+
+.task-priority.priority-medium_priority {
+    background-color: var(--medium-priority);
+    color: #333;
+}
+
+.task-priority.priority-low_priority {
+    background-color: var(--low-priority);
+    color: white;
+}
 
 /* CARD STRUCTURE */
 .task-header {
@@ -144,8 +170,13 @@
     transition: color 0.2s ease;
 }
 
-.task-actions button:hover { color: var(--urgent); }
-.task-actions .task-edit:hover { color: var(--low-priority); }
+.task-actions button:hover {
+    color: var(--urgent);
+}
+
+.task-actions .task-edit:hover {
+    color: var(--low-priority);
+}
 
 /* INTERACTIVE STATES */
 .task-item:hover {
@@ -187,3 +218,23 @@
     display: block;
 }
 
+.task-status {
+    display: flex;
+    margin-right: 5px;
+}
+
+.completed-task {
+    text-decoration: line-through;
+    opacity: 0.7;
+    margin-left: 12px;
+}
+
+.status-completed {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #FF9800;
+    font-weight: bold;
+}

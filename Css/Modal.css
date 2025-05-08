@@ -82,6 +82,7 @@
 }
 
 .description-content {
+    margin-top: 12px;
     background-color: var(--card-bg-light);
     padding: 1rem;
     border-radius: 8px;

@@ -46,3 +46,19 @@ export const deleteTodo = async (id) => {
     if (!response.ok) throw new Error("Failed to delete task");
     return await response.json();
 };
+
+export const completeTodo = async (id) => {
+    const task = await getTodo(id); 
+    const response = await fetch(apiURL + "todos/" + id, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            ...task, // Mantemos todas as propriedades existentes
+            completed: true // Atualizamos apenas o status
+        }),
+    });
+    if (!response.ok) throw new Error("Failed to complete task");
+    return await response.json();
+};

@@ -1,4 +1,4 @@
-import { createTodo, getTodos, deleteTodo, updateTodo } from '../Api/Api.js';
+import { createTodo, getTodos, deleteTodo, updateTodo, getTodo, completeTodo } from '../Api/Api.js';
 
 // DOM Elements
 const createButton = document.getElementById('createBtn');
@@ -14,6 +14,7 @@ const editTaskForm = document.getElementById('editTaskForm');
 const filterSelect = document.getElementById('filter');
 
 let currentEditingTask = null;
+let currentTaskInView = null;
 
 const formatDueDate = (date, time) => {
     if (!date) return 'No due date';
@@ -68,13 +69,22 @@ const closeEditModalHandler = () => {
 };
 
 const openTaskViewModal = (task) => {
+    currentTaskInView = task;
     const modalContent = document.querySelector('#taskViewModal .modal-content');
+    const completeBtn = document.getElementById('completeTaskBtn');
 
     // Reset classes
     modalContent.className = 'modal-content';
     modalContent.classList.add(`priority-${task.priority}`);
 
-    // Set task data
+    // Mostra/esconde o botão de completar
+    if (task.completed) {
+        completeBtn.style.display = 'none'; // Esconde se já está completa
+    } else {
+        completeBtn.style.display = 'block'; // Mostra se está pendente
+    }
+
+    // Restante do código da função permanece igual...
     document.getElementById('modalTaskTitle').textContent = task.title || 'No Title';
     document.getElementById('modalTaskDescription').textContent = task.description || 'No Description';
     document.getElementById('modalTaskPriority').textContent = getPriorityLabel(task.priority);
@@ -86,15 +96,10 @@ const openTaskViewModal = (task) => {
     if (task.completed) {
         statusElement.textContent = 'Completed';
         statusElement.className = 'info-value status-completed';
-        document.getElementById('completeTaskBtn').classList.add('completed');
     } else {
         statusElement.textContent = 'Pending';
         statusElement.className = 'info-value status-pending';
-        document.getElementById('completeTaskBtn').classList.remove('completed');
     }
-
-    // Set priority color
-    document.getElementById('modalTaskPriority').className = `info-value priority-${task.priority}`;
 
     // Show modal
     taskViewModal.style.display = 'block';
@@ -154,13 +159,14 @@ const displayTasks = async () => {
 
             taskElement.innerHTML = `
                 <div class="task-header">
-                    <h3 class="task-title">${task.title || 'No Title'}</h3>
+                    <h3 class="task-title ${task.completed ? 'completed-task' : ''}">${task.title || 'No Title'}</h3>
                     <span class="task-priority priority-${task.priority}">${priorityLabel}</span>
                 </div>
                 <div class="task-content">
                     <p class="task-description">${truncateDescription(task.description)}</p>
                 </div>
                 <div class="task-footer">
+                    <task-status status="${task.completed ? 'completed' : 'pending'}"></task-status>
                     <span class="task-category">${task.category || 'No Category'}</span>
                     <span class="task-date">${dueDate}</span>
                     <div class="task-actions">
@@ -296,16 +302,18 @@ const filterTasks = async () => {
         let filteredTasks = [];
         if (filterValue === 'all') {
             filteredTasks = tasks;
+        } else if (filterValue === 'completed') {
+            filteredTasks = tasks.filter(task => task.completed);
+        } else if (filterValue === 'pending') {
+            filteredTasks = tasks.filter(task => !task.completed);
         } else if ([
             'urgent_priority',
             'high_priority',
             'medium_priority',
             'low_priority'
         ].includes(filterValue)) {
-            // Filtro por prioridade
             filteredTasks = tasks.filter(task => task.priority === filterValue);
         } else {
-            // Filtro por categoria
             filteredTasks = tasks.filter(task => task.category === filterValue);
         }
 
@@ -324,13 +332,14 @@ const filterTasks = async () => {
 
             taskElement.innerHTML = `
                 <div class="task-header">
-                    <h3 class="task-title">${task.title || 'No Title'}</h3>
+                    <h3 class="task-title ${task.completed ? 'completed-task' : ''}">${task.title || 'No Title'}</h3>
                     <span class="task-priority priority-${task.priority}">${priorityLabel}</span>
                 </div>
                 <div class="task-content">
                     <p class="task-description">${truncateDescription(task.description)}</p>
                 </div>
                 <div class="task-footer">
+                    <task-status status="${task.completed ? 'completed' : 'pending'}"></task-status>
                     <span class="task-category">${task.category || 'No Category'}</span>
                     <span class="task-date">${dueDate}</span>
                     <div class="task-actions">

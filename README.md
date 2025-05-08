@@ -1,12 +1,12 @@
-### **Titulo do website:** Todoodledo
+### **Titulo do website:** DevTrack
 
 <br>
 
-### **Descrição do website:** Website de To-do List
+### **Descrição do website:** Website de To-do List 
 
 <br>
 
-### **Repositorio:** /frontend1-project-todoodledoo
+### **Repositorio:** /[DevTrack](https://github.com/Tomas4030/frontend1-projeto.git)
 
 <br>
 
