@@ -416,3 +416,9 @@ document.addEventListener('DOMContentLoaded', () => {
     displayTasks();
 });
 
+//
+if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register84('sw.js')
+    .then(() => console.log('Service Worker Registered'))
+    .catch((error) => console.log('Service Worker Error', error));
+}
