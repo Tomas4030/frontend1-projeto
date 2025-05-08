@@ -1,5 +1,5 @@
 import { createTodo, getTodos, deleteTodo, updateTodo, getTodo, completeTodo } from '../Api/Api.js';
-import { displayTasks } from './Create_taks.js';
+import { displayTasks } from '../components/TaskStatus.js';
 
 // DOM Elements
 const createButton = document.getElementById('createBtn');
