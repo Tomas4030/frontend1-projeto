@@ -1,6 +1,7 @@
 @import url(./Animacoes.css);
 @import url(./Responsivo.css);
 @import url(./Taks.css);
+@import url(./Modal.css);
 
 :root {
     --urgent: #ff5252;
@@ -26,12 +27,18 @@ body {
     color: var(--text-secondary);
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 h1, h2 {
     color: var(--text-primary);
 }
 
 .typewriter {
-    font-size: 120px;
+    font-size: clamp(2.5rem, 10vw, 7.5rem);
     margin-top: 30px;
     font-family: monospace;
     color: var(--text-primary);
@@ -122,4 +129,23 @@ h1, h2 {
     transition: border 0.3s, box-shadow 0.3s;
     appearance: none;
     cursor: pointer;
+}
+
+/* SCROLLBARS */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--card-bg-light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }

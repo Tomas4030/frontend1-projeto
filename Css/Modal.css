@@ -1,18 +1,114 @@
-#taskForm {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+/* MODAL STYLES */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    animation: fadeIn 0.4s ease;
 }
 
-.modal-title{
-    margin-bottom: 20px;
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    margin: 10% auto;
+    width: 60%;
+    max-width: 700px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    border-top: 5px solid var(--urgent);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.modal-content.priority-urgent { border-top-color: var(--urgent); }
+.modal-content.priority-high_priority { border-top-color: var(--high-priority); }
+.modal-content.priority-medium_priority { border-top-color: var(--medium-priority); }
+.modal-content.priority-low_priority { border-top-color: var(--low-priority); }
+
+.close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    color: #fff;
+    font-size: 1.875rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close:hover {
+    color: var(--urgent);
+    transform: scale(1.1);
+}
+
+/* MODAL STRUCTURE */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.modal-info-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: var(--card-bg-light);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modal-info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-description {
+    margin-top: 1.25rem;
+}
+
+.description-content {
+    background-color: var(--card-bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* FORM ELEMENTS */
+#taskForm,
+#editTaskForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 #taskForm input,
 #taskForm textarea,
 #taskForm select,
-#taskForm button {
-    padding: 12px;
+#taskForm button,
+#editTaskForm input,
+#editTaskForm textarea,
+#editTaskForm select,
+#editTaskForm button {
+    padding: 0.75rem;
     border-radius: 8px;
     border: 1px solid #333;
     background-color: #27292a;
@@ -20,25 +116,68 @@
     font-size: 1rem;
     font-weight: 500;
     outline: none;
-    transition: border 0.3s, box-shadow 0.3s;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-
-#taskForm textarea {
+#taskForm textarea,
+#editTaskForm textarea {
     height: 120px;
     resize: none;
 }
 
-button[type="submit"] {
+#taskForm button[type="submit"],
+#editTaskForm button[type="submit"] {
     background-color: #ff5252;
     color: #fff;
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button[type="submit"]:hover {
+#taskForm button[type="submit"]:hover,
+#editTaskForm button[type="submit"]:hover {
     background-color: #e64a4a;
+    transform: scale(1.05);
 }
 
+/* UTILITY CLASSES */
+.info-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.status-pending { color: var(--urgent); }
+.status-completed { color: var(--low-priority); }
+
+.complete-btn {
+    background: none;
+    border: none;
+    color: var(--low-priority);
+    font-size: 1.75rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: flex;
+    margin-right: 1rem;
+}
+
+.complete-btn:hover {
+    transform: scale(1.1);
+    color: #6ab56e;
+}
+
+.complete-btn.completed {
+    color: #6ab56e;
+}
+
+.modal-title {
+    margin-bottom: 10px;
+}
