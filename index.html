@@ -1,1 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./Css/style.css" />
+    <link rel="shortcut icon" href="./components/icon.jpg" type="image/x-icon" />
+    <script src="./components/TaskStatus.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>DevTrack</title>
+</head>
+
+<body>
+    <main>
+        <section class="search-area">
+            <div class="titulo">
+                <h1 class="typewriter">DevTrack</h1>
+            </div>
+
+            <div class="search-filter-row">
+                <div class="search-container">
+                    <input id="searchbarinput" class="spectacledcoder-search-bar-input" type="text"
+                        placeholder="Não Funciona..." />
+                    <img id="searchicon" width="22" height="22"
+                        src="https://img.icons8.com/sf-black/100/ffffff/search.png" alt="search" />
+                </div>
+
+                <div class="filtros">
+                    <select class="searchbarfilter" id="filter">
+                        <option value="all">All</option>
+                        <option value="completed">Completed ✅</option>
+                        <option value="pending">Pending ⏳</option>
+                        <option value="home">Home 🏠</option>
+                        <option value="shopping">Shopping 🛒</option>
+                        <option value="fitness">Fitness 🏋️‍♂️</option>
+                        <option value="study">Study 📚</option>
+                        <option value="social">Social 👫</option>
+                        <option value="finance">Finance 💰</option>
+                        <option value="urgent_priority">Urgent ⚠️</option>
+                        <option value="high_priority">High Priority 🔥</option>
+                        <option value="medium_priority">Medium Priority ⚖️</option>
+                        <option value="low_priority">Low Priority 🕒</option>
+                    </select>
+                </div>
+
+                <button id="createBtn" class="add-task-button">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+            </div>
+
+            <div class="task-list-container">
+                <ul id="taskList" class="task-list"></ul>
+            </div>
+
+            <!-- Modal de Visualização -->
+            <div id="taskViewModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeTaskViewModal" class="close">&times;</span>
+
+                    <div class="modal-header">
+                        <h2 id="modalTaskTitle"></h2>
+                        <button id="completeTaskBtn" class="complete-btn" title="Mark as completed">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                    </div>
+
+                    <div class="modal-grid">
+                        <div class="modal-info-card">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <div>
+                                <span class="info-label">Priority</span>
+                                <span id="modalTaskPriority" class="info-value priority-high">High</span>
+                            </div>
+                        </div>
+
+                        <div class="modal-info-card">
+                            <i class="fas fa-tag"></i>
+                            <div>
+                                <span class="info-label">Category</span>
+                                <span id="modalTaskCategory" class="info-value">Work</span>
+                            </div>
+                        </div>
+
+                        <div class="modal-info-card">
+                            <i class="fas fa-calendar-day"></i>
+                            <div>
+                                <span class="info-label">Due Date</span>
+                                <span id="modalTaskDueDate" class="info-value">Tomorrow</span>
+                            </div>
+                        </div>
+
+                        <div class="modal-info-card">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <span class="info-label">Status</span>
+                                <span id="modalTaskStatus" class="info-value status-pending">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-description">
+                        <h3><i class="fas fa-align-left"></i> Description</h3>
+                        <div id="modalTaskDescription" class="description-content"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal de Criação -->
+            <div id="taskCreateModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeCreateModal" class="close">&times;</span>
+                    <h2 class="modal-title">Create Task</h2>
+                    <form id="taskForm">
+                        <input type="text" id="taskTitle" placeholder="Task Title" required />
+                        <textarea id="taskDescription" placeholder="Task Description" required></textarea>
+                        <input type="date" name="taskdate" id="taskdate" required />
+                        <input type="time" name="tasktime" id="tasktime" required />
+
+                        <select class="taskCategory" id="taskCategoryCategory" required>
+                            <option value="home">Home 🏠</option>
+                            <option value="shopping">Shopping 🛒</option>
+                            <option value="fitness">Fitness 🏋️‍♂️</option>
+                            <option value="study">Study 📚</option>
+                            <option value="social">Social 👫</option>
+                            <option value="finance">Finance 💰</option>
+                        </select>
+
+                        <select class="taskCategory" id="taskCategoryPriority" required>
+                            <option value="urgent_priority">Urgent ⚠️</option>
+                            <option value="high_priority">High Priority 🔥</option>
+                            <option value="medium_priority">Medium Priority ⚖️</option>
+                            <option value="low_priority">Low Priority 🕒</option>
+                        </select>
+
+                        <button type="submit" id="submitTaskBtn">Create Task</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal de Edição -->
+            <div id="taskEditModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeEditModal" class="close">&times;</span>
+                    <h2 class="modal-title">Edit Task</h2>
+                    <form id="editTaskForm">
+                        <input type="text" id="editTaskTitle" placeholder="Task Title" required />
+                        <textarea id="editTaskDescription" placeholder="Task Description" required></textarea>
+                        <input type="date" name="editTaskDate" id="editTaskDate" required />
+                        <input type="time" name="editTaskTime" id="editTaskTime" required />
+
+                        <select class="taskCategory" id="editTaskCategory" required>
+                            <option value="home">Home 🏠</option>
+                            <option value="shopping">Shopping 🛒</option>
+                            <option value="fitness">Fitness 🏋️‍♂️</option>
+                            <option value="study">Study 📚</option>
+                            <option value="social">Social 👫</option>
+                            <option value="finance">Finance 💰</option>
+                        </select>
+
+                        <select class="taskCategory" id="editTaskPriority" required>
+                            <option value="urgent_priority">Urgent ⚠️</option>
+                            <option value="high_priority">High Priority 🔥</option>
+                            <option value="medium_priority">Medium Priority ⚖️</option>
+                            <option value="low_priority">Low Priority 🕒</option>
+                        </select>
+
+                        <button type="submit" id="updateTaskBtn">Update Task</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="./Js/Create_taks.js"></script>
+</body>
+
+</html>
