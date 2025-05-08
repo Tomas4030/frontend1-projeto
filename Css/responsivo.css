@@ -34,7 +34,7 @@
         position: relative;
         bottom: 90px;
     }
-    
+
     #taskEditModal .modal-content,
     #taskCreateModal .modal-content,
     #taskViewModal .modal-content {
@@ -47,9 +47,10 @@
     #taskViewModal .modal-description {
         padding: 10px 0;
     }
-    
+
     #taskViewModal .modal-description h3 {
         font-size: 1rem;
     }
+
 
 }
