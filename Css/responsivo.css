@@ -35,12 +35,14 @@
         bottom: 90px;
     }
     
+    #taskEditModal .modal-content,
+    #taskCreateModal .modal-content,
     #taskViewModal .modal-content {
         border-radius: 8px;
         width: 90%;
         margin: 25px auto;
     }
-    
+
     #taskViewModal .modal-header,
     #taskViewModal .modal-description {
         padding: 10px 0;
@@ -50,5 +52,4 @@
         font-size: 1rem;
     }
 
-    
 }

@@ -1,4 +1,4 @@
-import { createTodo, getTodos, deleteTodo, updateTodo, getTodo, completeTodo } from '../Api/Api.js';
+import { createTodo, getTodos, deleteTodo, updateTodo, completeTodo } from '../Api/Api.js';
 
 // DOM Elements
 const createButton = document.getElementById('createBtn');

@@ -182,6 +182,7 @@
 .task-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    background-color: #4CAF50;
 }
 
 .task-item:hover::before {
@@ -238,3 +239,5 @@
     color: #FF9800;
     font-weight: bold;
 }
+
+
